@@ -20,7 +20,7 @@ pipeline{
         stage ('Uploading artifact to nexus'){
             steps{
                 withCredentials([usernamePassword(credentialsId: 'Hemant_Nexus_Cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh label: '', script: 'curl -u $USER:$PASS --upload-file target/webapp-${BUILD_NUMBER}.war http://3.14.251.87:8081/nexus/content/repositories/devopstraining/Team AHM/webapp-${BUILD_NUMBER}.war'
+                    sh label: '', script: 'curl -u $USER:$PASS --upload-file target/webapp-${BUILD_NUMBER}.war http://3.14.251.87:8081/nexus/content/repositories/devopstraining/Team_AHM/webapp-${BUILD_NUMBER}.war'
                 }
             }
         }
