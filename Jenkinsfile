@@ -30,20 +30,20 @@ pipeline{
          stage ('Artifact'){
              steps{
                      withCredentials([usernamePassword(credentialsId: 'manisaNexsus', passwordVariable: 'pass', usernameVariable: 'usr')]) {
-                         sh 'curl -u $usr:$pass --upload-file src/target/webapp-Server-0.0.1-SNAPSHOT.war http://3.14.251.87:8081/nexus/content/repositories/devopstraining/Team_AHM/webapp-Server-0.0.1-SNAPSHOT.war'
+                         sh 'curl -u $usr:$pass --upload-file target/webapp-${BUILD_NUMBER}.war http://3.14.251.87:8081/nexus/content/repositories/devopstraining/Team_AHM/webapp-${BUILD_NUMBER}.war'
                      }
                  }
         }
-    //   stage ('Deploy'){
-    //         steps{
-    //              withCredentials([usernamePassword(credentialsId: 'devops-tomcat', passwordVariable: 'pass', usernameVariable: 'userId')]) {
+      stage ('Deploy'){
+             steps{
+                  withCredentials([usernamePassword(credentialsId: 'devops-tomcat', passwordVariable: 'pass', usernameVariable: 'userId')]) {
         
-    //                 sh 'curl -u  $userId:$pass http://ec2-18-224-182-74.us-east-2.compute.amazonaws.com:8080/manager/text/undeploy?path=/ManisaSpringSample'
-    //                 sh  'curl -u  $userId:$pass --upload-file target/SpringBootJSP-${BUILD_NUMBER}.war http://ec2-18-224-182-74.us-east-2.compute.amazonaws.com:8080/manager/text/deploy?config=file:/var/lib/tomcat8/SpringBootJSP-${BUILD_NUMBER}.war\\&path=/ManisaSpringSample'
-    //             }
-    //         }
+                     sh 'curl -u  $userId:$pass http://ec2-18-224-182-74.us-east-2.compute.amazonaws.com:8080/manager/text/undeploy?path=/ManisaSpringSample'
+                     sh  'curl -u  $userId:$pass --upload-file target/webapp-${BUILD_NUMBER}.war http://ec2-18-224-182-74.us-east-2.compute.amazonaws.com:8080/manager/text/deploy?config=file:/var/lib/tomcat8/webapp-${BUILD_NUMBER}.war\\&path=/ManisaSpringSample'
+                 }
+             }
     
-    //     }
+         }
     }
     post{
         success {
