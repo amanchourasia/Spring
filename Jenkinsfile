@@ -1,38 +1,28 @@
 pipeline{
     agent any
     stages{
-        /*stage('checkout'){
-            steps{
-                withCredentials([string(credentialsId: 'springMan', variable: 'git')]) {
-                echo "My password is '${git}'!"
-                checkout([$class: 'GitSCM',
-                branches: [[name: 'dev']],
-                extensions: [[$class: 'WipeWorkspace']],
-                userRemoteConfigs: [[url: "${git}"]]
-                ])
-                }
-            }
-        }*/
         stage ('build and test'){
             steps{
-                    sh "mvn clean install -DskipTests."
+                    sh "mvn clean install"
             }
         }
          
-       /*stage('Sonar'){
-            environment{
+         stage('Sonar') {
+            environment {
                 scannerHome=tool 'sonar scanner'
             }
             steps{
-                sh "mvn sonar:sonar -Dsonar.host.url=http://3.14.251.87:9000" 
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'Hemant_Sonar_Cred', usernameVariable: 'USER', passwordVariable: 'PASS']]){
+                    sh "mvn $USER:$PASS -Dsonar.host.url=http://3.14.251.87:9000"
+                }
             }
-        }*/
-         stage ('Artifact'){
-             steps{
-                     withCredentials([usernamePassword(credentialsId: 'manisaNexsus', passwordVariable: 'pass', usernameVariable: 'usr')]) {
-                         sh 'curl -u $usr:$pass --upload-file target/webapp-${BUILD_NUMBER}.war http://3.14.251.87:8081/nexus/content/repositories/devopstraining/Team_AHM/webapp-${BUILD_NUMBER}.war'
-                     }
-                 }
+        }
+        stage ('Uploading artifact to nexus'){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'Hemant_Nexus_Cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh label: '', script: 'curl -u $USER:$PASS --upload-file target/webapp-${BUILD_NUMBER}.war http://3.14.251.87:8081/nexus/content/repositories/devopstraining/Team AHM/webapp-${BUILD_NUMBER}.war'
+                }
+            }
         }
       stage ('Deploy'){
              steps{
@@ -52,13 +42,6 @@ pipeline{
         unsuccessful{
             slackSend (color: 'danger', message: "BUILD FAIL: The project in '${JOB_NAME} with build number  [${BUILD_NUMBER}]' has failed")
         }
-    // success {
-    //         sendEmail("Successful");
-    //     }
-    //     failure {
-    //         sendEmail("Failed");
-    //     }
-    // }
 
     }
 }
