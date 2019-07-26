@@ -13,14 +13,14 @@ pipeline{
             }
             steps{
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'Hemant_Sonar_Cred', usernameVariable: 'USER', passwordVariable: 'PASS']]){
-                    sh "mvn $USER:$PASS -Dsonar.host.url=http://3.14.251.87:9000"
+                    sh "mvn $USER:$PASS -Dsonar.host.url=http://ec2-3-17-164-37.us-east-2.compute.amazonaws.com:9000"
                 }
             }
         }
         stage ('Uploading artifact to nexus'){
             steps{
                 withCredentials([usernamePassword(credentialsId: 'Hemant_Nexus_Cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh label: '', script: 'curl -u $USER:$PASS --upload-file target/webapp-${BUILD_NUMBER}.war http://3.14.251.87:8081/nexus/content/repositories/devopstraining/Team1/webapp-${BUILD_NUMBER}.war'
+                    sh 'curl -u $USER:$PASS --upload-file target/webapp-${BUILD_NUMBER}.war  http://ec2-3-17-164-37.us-east-2.compute.amazonaws.com:8081/nexus/content/repositories/devopstraining/Team_AHM/webapp-${BUILD_NUMBER}.war'
                 }
             }
         }
