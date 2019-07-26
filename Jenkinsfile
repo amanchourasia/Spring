@@ -28,8 +28,8 @@ pipeline{
              steps{
                   withCredentials([usernamePassword(credentialsId: 'devops-tomcat', passwordVariable: 'pass', usernameVariable: 'userId')]) {
         
-                     sh 'curl -u  $userId:$pass http://ec2-18-224-182-74.us-east-2.compute.amazonaws.com:8080/manager/text/undeploy?path=/ManisaSpringSample'
-                     sh  'curl -u  $userId:$pass --upload-file target/webapp-${BUILD_NUMBER}.war http://ec2-18-224-182-74.us-east-2.compute.amazonaws.com:8080/manager/text/deploy?config=file:/var/lib/tomcat8/webapp-${BUILD_NUMBER}.war\\&path=/ManisaSpringSample'
+                     sh 'curl -u  $userId:$pass http://ec2-18-188-202-13.us-east-2.compute.amazonaws.com:8080/manager/text/undeploy?path=/ManisaSpringSample'
+                     sh  'curl -u  $userId:$pass --upload-file target/webapp-${BUILD_NUMBER}.war http://ec2-18-188-202-13.us-east-2.compute.amazonaws.com:8080/manager/text/deploy?config=file:/var/lib/tomcat8/webapp-${BUILD_NUMBER}.war\\&path=/ManisaSpringSample'
                  }
              }
     
